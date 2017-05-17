@@ -13,11 +13,12 @@ package main
 import (
 	"container/ring"
 	"fmt"
-	log "github.com/cihub/seelog"
-	"github.com/linkedin/Burrow/protocol"
 	"regexp"
 	"sync"
 	"time"
+
+	log "github.com/cihub/seelog"
+	"github.com/linkedin/Burrow/protocol"
 )
 
 type OffsetStorage struct {
@@ -316,7 +317,6 @@ func (storage *OffsetStorage) addConsumerOffset(offset *protocol.PartitionOffset
 		offset.Cluster, offset.Topic, offset.Partition, offset.Group, offset.Timestamp, offset.Offset,
 		partitionLag)
 
-
 	// Advance the ring pointer
 	consumerTopicMap[offset.Partition] = consumerTopicMap[offset.Partition].Next()
 	clusterOffsets.consumerLock.Unlock()
@@ -345,7 +345,7 @@ func (storage *OffsetStorage) dropGroup(cluster string, group string, resultChan
 // Rule 2:  If the consumer offset does not change, and the lag is non-zero, it's an error (partition is stalled)
 // Rule 3:  If the consumer offsets are moving, but the lag is consistently increasing, it's a warning (consumer is slow)
 // Rule 4:  If the difference between now and the last offset timestamp is greater than the difference between the last and first offset timestamps, the
-//          consumer has stopped committing offsets for that partition (error), unless
+//          consumer has stopped committing offsets for that partition (error), unless consumer offset and the current broker offset for the partition are equal, the partition is not considered to be in error
 // Rule 5:  If the lag is -1, this is a special value that means there is no broker offset yet. Consider it good (will get caught in the next refresh of topics)
 // Rule 6:  If the consumer offset decreases from one interval to the next the partition is marked as a rewind (error)
 func (storage *OffsetStorage) evaluateGroup(cluster string, group string, resultChannel chan *protocol.ConsumerGroupStatus, showall bool) {
@@ -700,14 +700,14 @@ func (storage *OffsetStorage) debugPrintGroup(cluster string, group string) {
 func (storage *OffsetStorage) AcceptConsumerGroup(group string) bool {
 	// First check to make sure group is in the whitelist
 	if (storage.groupWhitelist != nil) && !storage.groupWhitelist.MatchString(group) {
-		return false;
+		return false
 	}
 
 	// The group is in the whitelist (or there is not whitelist).  Now check the blacklist
 	if (storage.groupBlacklist != nil) && storage.groupBlacklist.MatchString(group) {
-		return false;
+		return false
 	}
 
 	// good to go
-	return true;
+	return true
 }

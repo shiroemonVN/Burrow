@@ -14,14 +14,15 @@ import (
 	"bytes"
 	"crypto/tls"
 	"crypto/x509"
-	"io/ioutil"
 	"encoding/binary"
 	"errors"
+	"io/ioutil"
+	"sync"
+	"time"
+
 	"github.com/Shopify/sarama"
 	log "github.com/cihub/seelog"
 	"github.com/linkedin/Burrow/protocol"
-	"sync"
-	"time"
 )
 
 type KafkaClient struct {
@@ -49,6 +50,7 @@ func NewKafkaClient(app *ApplicationContext, cluster string) (*KafkaClient, erro
 	// Set up sarama config from profile
 	clientConfig := sarama.NewConfig()
 	profile := app.Config.Clientprofile[app.Config.Kafka[cluster].Clientprofile]
+	clientConfig.Metadata.RefreshFrequency = time.Duration(profile.RefreshFrequency) * time.Second
 	clientConfig.ClientID = profile.ClientID
 	clientConfig.Net.TLS.Enable = profile.TLS
 	if profile.TLSCertFilePath == "" || profile.TLSKeyFilePath == "" || profile.TLSCAFilePath == "" {
@@ -66,7 +68,7 @@ func NewKafkaClient(app *ApplicationContext, cluster string) (*KafkaClient, erro
 		caCertPool.AppendCertsFromPEM(caCert)
 		clientConfig.Net.TLS.Config = &tls.Config{
 			Certificates: []tls.Certificate{cert},
-			RootCAs: caCertPool,
+			RootCAs:      caCertPool,
 		}
 		clientConfig.Net.TLS.Config.BuildNameToCertificate()
 	}

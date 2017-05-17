@@ -1,6 +1,6 @@
 FROM golang:alpine
 
-MAINTAINER LinkedIn Burrow "https://github.com/linkedin/Burrow"
+LABEL maintainer LinkedIn Burrow "https://github.com/linkedin/Burrow"
 
 RUN apk add --no-cache curl bash git ca-certificates wget \
  && update-ca-certificates \
