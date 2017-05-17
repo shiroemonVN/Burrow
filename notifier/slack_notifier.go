@@ -15,11 +15,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	log "github.com/cihub/seelog"
-	"github.com/linkedin/Burrow/protocol"
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	log "github.com/cihub/seelog"
+	"github.com/shiroemonVN/Burrow/protocol"
 )
 
 type SlackNotifier struct {
@@ -30,6 +31,7 @@ type SlackNotifier struct {
 	IconUrl       string
 	IconEmoji     string
 	Threshold     int
+	Interval      int64
 	HttpClient    *http.Client
 	Groups        []string
 	groupMsgs     map[string]Message

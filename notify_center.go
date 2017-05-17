@@ -11,9 +11,6 @@
 package main
 
 import (
-	log "github.com/cihub/seelog"
-	"github.com/linkedin/Burrow/notifier"
-	"github.com/linkedin/Burrow/protocol"
 	"math/rand"
 	"net"
 	"net/http"
@@ -21,6 +18,10 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	log "github.com/cihub/seelog"
+	"github.com/shiroemonVN/Burrow/notifier"
+	"github.com/shiroemonVN/Burrow/protocol"
 )
 
 type NotifyCenter struct {
@@ -228,9 +229,9 @@ func NewHttpNotifier(app *ApplicationContext) (*notifier.HttpNotifier, error) {
 			Method:       httpConfig.MethodClose,
 			TemplateFile: httpConfig.TemplateClose,
 		},
-		Threshold:          httpConfig.PostThreshold,
-		SendClose:          httpConfig.SendClose,
-		Extras:             extras,
+		Threshold: httpConfig.PostThreshold,
+		SendClose: httpConfig.SendClose,
+		Extras:    extras,
 		HttpClient: &http.Client{
 			Timeout: time.Duration(httpConfig.Timeout) * time.Second,
 			Transport: &http.Transport{
@@ -254,6 +255,7 @@ func NewSlackNotifier(app *ApplicationContext) (*notifier.SlackNotifier, error) 
 		Username:  app.Config.Slacknotifier.Username,
 		IconUrl:   app.Config.Slacknotifier.IconUrl,
 		IconEmoji: app.Config.Slacknotifier.IconEmoji,
+		Interval:  app.Config.Slacknotifier.Interval,
 		HttpClient: &http.Client{
 			Timeout: time.Duration(app.Config.Slacknotifier.Timeout) * time.Second,
 			Transport: &http.Transport{

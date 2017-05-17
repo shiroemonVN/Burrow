@@ -8,8 +8,8 @@ RUN apk add --no-cache curl bash git ca-certificates wget \
  && chmod +x gpm \
  && mv gpm /usr/local/bin
 
-ADD . $GOPATH/src/github.com/linkedin/Burrow
-RUN cd $GOPATH/src/github.com/linkedin/Burrow \
+ADD . $GOPATH/src/github.com/shiroemonVN/Burrow
+RUN cd $GOPATH/src/github.com/shiroemonVN/Burrow \
  && gpm install \
  && go install \
  && mv $GOPATH/bin/Burrow $GOPATH/bin/burrow \
